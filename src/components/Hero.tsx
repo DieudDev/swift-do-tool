@@ -1,8 +1,32 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles, Trophy, Shield } from "lucide-react";
+import { Sparkles, Trophy, Shield, Users, Award, Coins } from "lucide-react";
+import { useEffect, useState } from "react";
 import heroImage from "@/assets/hero-gaming.jpg";
 
 const Hero = () => {
+  const [stats, setStats] = useState({ players: 0, nfts: 0, volume: 0 });
+
+  useEffect(() => {
+    const duration = 2000;
+    const steps = 60;
+    const interval = duration / steps;
+
+    const targets = { players: 15847, nfts: 8234, volume: 2.4 };
+    let current = { players: 0, nfts: 0, volume: 0 };
+
+    const timer = setInterval(() => {
+      current = {
+        players: Math.min(current.players + Math.ceil(targets.players / steps), targets.players),
+        nfts: Math.min(current.nfts + Math.ceil(targets.nfts / steps), targets.nfts),
+        volume: Math.min(current.volume + (targets.volume / steps), targets.volume),
+      };
+      setStats(current);
+
+      if (current.players === targets.players) clearInterval(timer);
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, []);
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -53,19 +77,22 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Stats */}
+          {/* Live Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
-            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary-glow mb-2">100%</div>
-              <div className="text-sm text-muted-foreground">True Ownership</div>
+            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:scale-105 transition-transform cursor-default">
+              <Users className="w-8 h-8 text-primary-glow mb-3 mx-auto" />
+              <div className="text-3xl font-bold text-primary-glow mb-2">{stats.players.toLocaleString()}</div>
+              <div className="text-sm text-muted-foreground">Active Players</div>
             </div>
-            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6">
-              <div className="text-3xl font-bold text-accent mb-2">∞</div>
-              <div className="text-sm text-muted-foreground">Permanent Assets</div>
+            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:scale-105 transition-transform cursor-default">
+              <Award className="w-8 h-8 text-accent mb-3 mx-auto" />
+              <div className="text-3xl font-bold text-accent mb-2">{stats.nfts.toLocaleString()}</div>
+              <div className="text-sm text-muted-foreground">NFTs Minted</div>
             </div>
-            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6">
-              <div className="text-3xl font-bold text-secondary mb-2">24/7</div>
-              <div className="text-sm text-muted-foreground">On-Chain Trading</div>
+            <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:scale-105 transition-transform cursor-default">
+              <Coins className="w-8 h-8 text-secondary mb-3 mx-auto" />
+              <div className="text-3xl font-bold text-secondary mb-2">${stats.volume.toFixed(1)}M</div>
+              <div className="text-sm text-muted-foreground">Trading Volume</div>
             </div>
           </div>
         </div>
